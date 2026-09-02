@@ -136,8 +136,9 @@ void houseInit(void)
  */
 uint16_t tempC(uint16_t adc)
 {
-    (void)adc;      /* delete this line */
-    return 0U;      /* TODO */
+        uint32_t temp = (uint32_t)adc * 500U;  /* cast to uint32_t first */
+        return (uint16_t)(temp / 1024U);      
+    
 }
 
 
@@ -180,8 +181,36 @@ uint16_t tempC(uint16_t adc)
  */
 uint8_t applyRules(Room_t *r)
 {
-    (void)r;        /* delete this line */
-    return 0U;      /* TODO */
+    if (!READ_BIT(r->status, BIT_AUTO)) {
+        return 0; // Room is not in AUTO mode, do nothing
+    }
+
+    uint8_t oldStatus = r->status; // Save the old status for comparison
+
+    // Rule 1: Light follows people
+    if (READ_BIT(r->status, BIT_OCCUPIED)) {
+        SET_BIT(r->status, BIT_LAMP); // Turn on the lamp if occupied
+    } else {
+        CLR_BIT(r->status, BIT_LAMP); // Turn off the lamp if not occupied
+    }
+
+    // Rule 2: Fan follows heat
+    if (tempC(r->adc) >= TEMP_HOT) {
+        SET_BIT(r->status, BIT_FAN); // Turn on the fan if hot
+    } else {
+        CLR_BIT(r->status, BIT_FAN); // Turn off the fan if not hot
+    }
+
+    // Rule 3: Overheat overrides R1
+    if (tempC(r->adc) >= TEMP_ALARM) {
+        SET_BIT(r->status, BIT_ALARM); // Turn on the alarm if overheating
+        SET_BIT(r->status, BIT_LAMP);  // Ensure lamp is on during alarm
+    } else {
+        CLR_BIT(r->status, BIT_ALARM); // Turn off the alarm if not overheating
+    }
+
+    return (r->status != oldStatus) ? 1 : 0; // Return 1 if status changed, else 0
+    
 }
 
 
