@@ -10,10 +10,10 @@ menu actions that let a person change it.
 
 ## Fill this in before you start
 
-| Field | Your answer |
+| Field | microcontroller |
 |-------|-------------|
-| **Full name** | |
-| **Email** | |
+| **Full name** |omar abdelaziz elsaid elaraby |
+| **Email** |abdelazizomar899@gmail.com |
 | **Group** | G9 |
 | **Date started** | 02-09-2026|
 | **Date submitted** | 03-09-2026|

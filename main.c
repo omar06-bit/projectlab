@@ -21,7 +21,6 @@
  * ============================================================================
  */
 #include <stdio.h>
-//testtttt
 #include "house.h"
 #include "render.h"
 #include "ui.h"

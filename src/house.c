@@ -26,15 +26,26 @@
  *   - Nothing in this file prints anything. Printing is render.c's job.
  *
  * Smart Home Console · Day 03 midterm — G9
- * Student: <YOUR NAME HERE>
+ * Student: <omar abdelaziz>
  */
 #include "house.h"
+#define SET_BIT(X,BIT_NO) X|=(1<<BIT_NO) 
+#define CLR_BIT(X,BIT_NO) X&=~(1<<BIT_NO)   
+#define READ_BIT(X,BIT_NO) ((X&(1<<BIT_NO))>>BIT_NO) 
+#define TOGGLE_BIT(X,BIT_NO) X^=(1<<BIT_NO)   
 
-/* ---------------- module-private data (NFR-03) ---------------
+/* ---------------- module-private data (NFR-03) ------------
  * GIVEN. The array is static, so nothing outside this file can reach it.
  * Callers go through houseRoom() / houseRooms() below. Leave it that way —
  * main() must never index the house directly. */
-static Room_t house[ROOM_COUNT];
+
+
+typedef struct {
+    char     name[NAME_LEN];   /* "Living", "Kitchen", ...          */
+    uint8_t  status;           /* packed flags — bit macros only    */
+    uint16_t adc;              /* raw 10-bit sensor count, 0..1023  */
+} Room_t;
+static Room_t house[ROOM_COUNT];  /* the whole house, six rooms, fixed size */
 
 /* GIVEN — the only door to the array. render.c and ui.c both use this. */
 Room_t *houseRoom(uint8_t i)
@@ -79,7 +90,23 @@ void houseInit(void)
     static const uint8_t  SEED_OCC[ROOM_COUNT] = { 1U, 0U, 0U, 0U, 1U, 0U };
 
     /* TODO: the loop described above. */
-    (void)NAMES; (void)SEED_ADC; (void)SEED_OCC;   /* delete these */
+    for (uint8_t i = 0; i < ROOM_COUNT; i++) {
+        /* Copy the name into the room's name field */
+        snprintf(house[i].name, NAME_LEN, "%s", NAMES[i]);
+        
+        /* Set the ADC value */
+        house[i].adc = SEED_ADC[i];
+        
+        /* Initialize status to 0 and set the AUTO bit */
+        house[i].status = 0;
+        SET_BIT(house[i].status, BIT_AUTO);
+        
+        /* If the room is occupied in the seed data, set the OCCUPIED bit */
+        if (SEED_OCC[i]) {
+            SET_BIT(house[i].status, BIT_OCCUPIED);
+        }
+    }
+    
 }
 
 
