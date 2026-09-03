@@ -438,7 +438,7 @@ your screen — that column is how it will be marked.
 >
 > Try it, look at the screen, then put it back.
 
-*(write your answer here — a few sentences, in your own words)*
+*("Changing the rule order changes the execution sequence, which affects how state flags are modified. The final state depends on which rule runs last and overrides the previous ones)*
 
 ---
 
