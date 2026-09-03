@@ -182,6 +182,15 @@ uint8_t applyRules(Room_t *r)
 
     uint8_t oldStatus = r->status; // Save the old status for comparison
 
+    // Rule 3: Overheat overrides R1
+    if (tempC(r->adc) >= TEMP_ALARM) {
+        SET_BIT(r->status, BIT_ALARM); // Turn on the alarm if overheating
+        SET_BIT(r->status, BIT_LAMP);  // Ensure lamp is on during alarm
+    } else {
+        CLR_BIT(r->status, BIT_ALARM); // Turn off the alarm if not overheating
+    }
+
+
     // Rule 1: Light follows people
     if (READ_BIT(r->status, BIT_OCCUPIED)) {
         SET_BIT(r->status, BIT_LAMP); // Turn on the lamp if occupied
@@ -196,13 +205,7 @@ uint8_t applyRules(Room_t *r)
         CLR_BIT(r->status, BIT_FAN); // Turn off the fan if not hot
     }
 
-    // Rule 3: Overheat overrides R1
-    if (tempC(r->adc) >= TEMP_ALARM) {
-        SET_BIT(r->status, BIT_ALARM); // Turn on the alarm if overheating
-        SET_BIT(r->status, BIT_LAMP);  // Ensure lamp is on during alarm
-    } else {
-        CLR_BIT(r->status, BIT_ALARM); // Turn off the alarm if not overheating
-    }
+    
 
     return (r->status != oldStatus) ? 1 : 0; // Return 1 if status changed, else 0
     
