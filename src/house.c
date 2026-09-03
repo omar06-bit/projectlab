@@ -28,11 +28,9 @@
  * Smart Home Console · Day 03 midterm — G9
  * Student: <omar abdelaziz>
  */
+#include <stdio.h>
 #include "house.h"
-#define SET_BIT(X,BIT_NO) X|=(1<<BIT_NO) 
-#define CLR_BIT(X,BIT_NO) X&=~(1<<BIT_NO)   
-#define READ_BIT(X,BIT_NO) ((X&(1<<BIT_NO))>>BIT_NO) 
-#define TOGGLE_BIT(X,BIT_NO) X^=(1<<BIT_NO)   
+   
 
 /* ---------------- module-private data (NFR-03) ------------
  * GIVEN. The array is static, so nothing outside this file can reach it.
@@ -40,11 +38,8 @@
  * main() must never index the house directly. */
 
 
-typedef struct {
-    char     name[NAME_LEN];   /* "Living", "Kitchen", ...          */
-    uint8_t  status;           /* packed flags — bit macros only    */
-    uint16_t adc;              /* raw 10-bit sensor count, 0..1023  */
-} Room_t;
+
+
 static Room_t house[ROOM_COUNT];  /* the whole house, six rooms, fixed size */
 
 /* GIVEN — the only door to the array. render.c and ui.c both use this. */
@@ -234,8 +229,12 @@ uint8_t applyRules(Room_t *r)
  * the missing `else`.
  */
 uint8_t rulesPass(void)
-{
-    return 0U;      /* TODO */
+{   
+    for (uint8_t i = 0; i < ROOM_COUNT; i++) {
+        applyRules(&house[i]);
+    }
+        
+    return 0U;      
 }
 
 
@@ -253,8 +252,13 @@ uint8_t rulesPass(void)
  */
 uint8_t countRoomsWith(uint8_t bit)
 {
-    (void)bit;      /* delete this line */
-    return 0U;      /* TODO */
+    uint8_t count = 0U;
+    for (uint8_t i = 0; i < ROOM_COUNT; i++) {
+        if (READ_BIT(house[i].status, bit)) {
+            count++;
+        }
+    }
+    return count;      /* TODO */
 }
 
 
@@ -283,6 +287,8 @@ uint8_t countRoomsWith(uint8_t bit)
  */
 uint32_t sumAdc(const Room_t *rooms, uint8_t n)
 {
-    (void)rooms; (void)n;   /* delete this line */
-    return 0UL;             /* TODO */
+    if (n == 0) {
+        return 0;
+    }
+    return rooms[n - 1].adc + sumAdc(rooms, n - 1);
 }
