@@ -142,7 +142,7 @@ uint8_t pickRoom(void)
  */
 void setOccupancy(void)
 {
-    int8_t i = pickRoom();
+    uint8_t i = pickRoom();
     if (i == 255) {
         return ; 
     } 
@@ -191,7 +191,7 @@ void setOccupancy(void)
  */
 void setTemperature(void)
 {
-    int8_t i = pickRoom();
+    uint8_t i = pickRoom();
     if (i == 255) {
         return; 
     } 
@@ -199,9 +199,9 @@ void setTemperature(void)
     Room_t *r = houseRoom(i);
     
     int adcValue;
-    printf("  Raw ADC reading (0..%d): ", ADC_MAX);
-    if (!readInt(&adcValue) || adcValue < 0 || adcValue > ADC_MAX) {
-        statusSet(C_ALARM, "Invalid ADC value. Must be between 0 and %d.", ADC_MAX);
+    printf("  Raw ADC reading (0..%u): ", ADC_MAX);
+    if (!readInt(&adcValue) || adcValue < 0 || adcValue > (int)ADC_MAX) {
+        statusSet(C_ALARM, "Invalid ADC value. Must be between 0 and %u.", ADC_MAX);
         return; 
     }
     
@@ -246,7 +246,7 @@ void setTemperature(void)
  */
 void switchDevice(void)
 {
-    int8_t i = pickRoom();
+    uint8_t i = pickRoom();
     if (i == 255) {
         
         return; 
